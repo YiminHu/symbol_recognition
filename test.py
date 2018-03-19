@@ -1,13 +1,14 @@
 import tensorflow as tf
 import cv2
 import numpy as np
-
+import symclass
+CLASS_NUM = len(symclass.sym_classes)
 def classify_img(img):
     # x = tf.placeholder("float", [None, 784])
     x = tf.placeholder(tf.float32, [None, 784])
 
     # y_ = tf.placeholder("float", [None,10])
-    y_ = tf.placeholder(tf.float32, [None, 10])
+    y_ = tf.placeholder(tf.float32, [None, CLASS_NUM])
 
     # cross_entropy = -tf.reduce_sum(y_*tf.log(y))
     sess = tf.InteractiveSession()
@@ -47,14 +48,14 @@ def classify_img(img):
     h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1)+b_fc1)
     keep_prob = tf.placeholder("float")
     h_fc1_drop = tf.nn.dropout(h_fc1,keep_prob)
-    W_fc2 = weight_variable([1024,10])
-    b_fc2 = bias_variable([10])
+    W_fc2 = weight_variable([1024,CLASS_NUM])
+    b_fc2 = bias_variable([CLASS_NUM])
     y_conv = tf.nn.softmax(tf.matmul(h_fc1_drop,W_fc2)+b_fc2)
 
     cross_entropy = -tf.reduce_sum(y_*tf.log(y_conv))
-    train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
+    #train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
     correct_prediction = tf.equal(tf.argmax(y_conv,1), tf.argmax(y_,1))
-    accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
+    #accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
     saver = tf.train.Saver()
     img = cv2.resize(img,(28,28))
     img = img.reshape(28 * 28)
@@ -66,4 +67,4 @@ def classify_img(img):
     imgset.append(img)
     saver.restore(sess,'./test_model-9001')
     a = y_conv.eval(feed_dict={x:imgset,keep_prob:1.0})
-    return np.argmax(a[0])
+    return symclass.classDict[np.argmax(a[0])]
