@@ -2,13 +2,16 @@
 import tensorflow as tf
 import MathData
 import numpy as np
+import symclass
+
+CLASS_NUM = len(symclass.sym_classes)
 
 
 
 class DataSet(object):
     def __init__(self):
         self._epochs_completed = 0
-        images, labels = MathData.load_data('./data',28,10)
+        images, labels = MathData.load_data('./data',28,CLASS_NUM)
         print("loading complete")
         self._images = np.array(images)
         self._labels = np.array(labels)
@@ -37,7 +40,7 @@ print(type(testlabel[0][0]))
 x = tf.placeholder(tf.float32, [None, 784])
 
 # y_ = tf.placeholder("float", [None,10])
-y_ = tf.placeholder(tf.float32, [None, 10])
+y_ = tf.placeholder(tf.float32, [None, CLASS_NUM])
 
 # cross_entropy = -tf.reduce_sum(y_*tf.log(y))
 sess = tf.InteractiveSession()
@@ -77,20 +80,19 @@ h_pool2_flat = tf.reshape(h_pool2, [-1, 7*7*64])
 h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1)+b_fc1)
 keep_prob = tf.placeholder("float")
 h_fc1_drop = tf.nn.dropout(h_fc1,keep_prob)
-W_fc2 = weight_variable([1024,10])
-b_fc2 = bias_variable([10])
+W_fc2 = weight_variable([1024,CLASS_NUM])
+b_fc2 = bias_variable([CLASS_NUM])
 y_conv = tf.nn.softmax(tf.matmul(h_fc1_drop,W_fc2)+b_fc2)
 
 cross_entropy = -tf.reduce_sum(y_*tf.log(y_conv))
-train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
+train_step = tf.train.AdamOptimizer(1e-5).minimize(cross_entropy)
 correct_prediction = tf.equal(tf.argmax(y_conv,1), tf.argmax(y_,1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
 saver = tf.train.Saver()
 sess.run(tf.initialize_all_variables())
-saver.save(sess,'test_model')
 
-for i in range(5000):
-  images,labels = data_sets.next_batch(20)
+for i in range(20000):
+  images,labels = data_sets.next_batch(50)
   #print images.shape
   #print labels.shape
   #]print(i)

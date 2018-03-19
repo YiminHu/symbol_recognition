@@ -69,18 +69,14 @@ def gen_from_seed(dirname):
         if not filename.startswith('.'):
             print(filename)
             curimg = cv2.imread(dirname+'/'+filename,0)
-            ret,thresh = cv2.threshold(curimg,127,255,0)
-            image, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-            x,y,w,h = cv2.boundingRect(contours[1])
-            curimg = curimg[y+2:y+h-2,x+2:x+w-2]
             h,w = curimg.shape
-            for trans in range(2):
+            for trans in range(1):
                 origin1 = curimg.copy()
                 if not trans == 0:
                     x = random.randint(0,int(w*0.1))
                     y = random.randint(0,int(h*0.1))
                     origin1 = translate(origin1,x,y)
-                for rot in range(8):
+                for rot in range(5):
                     origin2 = origin1.copy()
                     if not rot == 0:
                         
