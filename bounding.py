@@ -18,12 +18,15 @@ test_ex_bin  = cv2.adaptiveThreshold(test,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2
 
 image, contours, hierarchy = cv2.findContours(test_ex_bin,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 for i in range(0,len(contours)):
-    x, y, w, h = cv2.boundingRect(contours[i])
-    if w*h>30:
-        cv2.rectangle(image, (x,y), (x+w,y+h), (153,153,0), 1)
-        newimage=test[y:y+h,x:x+w] 
-        cv2.imwrite(img_name+"result/"+str(i)+".jpg",newimage)
-        print (w*h)
+    if hierarchy[0][i][3]==0:
+        x, y, w, h = cv2.boundingRect(contours[i])
+        if w*h > 30:
+            cv2.rectangle(image, (x,y), (x+w,y+h), (153,153,0), 1)
+            newimage=test[y:y+h,x:x+w]
+            cv2.imwrite(img_name+"result/"+str(i)+".jpg",newimage)
+            print (w*h)
+
+    #can add root judgement here
     
 cv2.imwrite(img_name+"result/write.jpg",image)
 
