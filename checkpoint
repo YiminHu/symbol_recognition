@@ -1,6 +1,0 @@
-model_checkpoint_path: "test_model-501"
-all_model_checkpoint_paths: "test_model-101"
-all_model_checkpoint_paths: "test_model-201"
-all_model_checkpoint_paths: "test_model-301"
-all_model_checkpoint_paths: "test_model-401"
-all_model_checkpoint_paths: "test_model-501"
